@@ -461,12 +461,19 @@ local function exportSpritesheet(dialog)
 
         ---- Handle tags
         data["custom_states"] = {}
-        for i, tag in ipairs(aseprite_data["meta"]["frameTags"]) do
+        data["custom_states"][1] = {
+            ["name"] = "all",
+            ["start_frame"] = 0,
+            ["end_frame"] = #app.activeSprite.frames,
+            ["is_looped"] = dialog_data.all_frames_looped
+        }
+
+        for i, tag in ipairs(aseprite_data["meta"]["frameTags"], 2) do
             data["custom_states"][i] = {
                 ["name"] = tag["name"],
                 ["start_frame"] = tag["from"],
                 ["end_frame"] = tag["to"],
-                ["is_looped"] = dialog_data["tag_" .. i]
+                ["is_looped"] = dialog_data["tag_looped_" .. i]
             }
         end
 
@@ -503,16 +510,21 @@ dialog:separator{ text="General" }
                            "Packed" } }
       :newrow()
       :combobox{ id="frame_collection",
-                 label="Frames:",
+                 label="Frames [UNIMPLEMENTED]:",
                  options={ "All Frames", "Selected Frames" } }
       :newrow()
       :separator{ text="Tag Information" }
       :newrow()
 
+dialog:label{ label="All Frames" }
+      :newrow()
+      :check { id="all_frames_looped",
+               label="  Set to Looped:" }
+
 for i,tag in ipairs(app.activeSprite.tags) do
     dialog:label{ label=tag.name }
           :newrow()
-          :check { id="tag_" .. i,
+          :check { id="tag_looped_" .. i,
                    label="  Set to Looped:" }
 end
 
